@@ -6,9 +6,9 @@
 
 ### About
 
-</div>
+Valgrind is a program for encrypting information for educational purposes. It allows you to encrypt and decrypt various types of information.
 
-Valgrind is a program for encrypting various information for educational purposes. 
+</div>
 
 > [!WARNING]
 > The program is being created as part of my graduation project. 

@@ -2,24 +2,27 @@ import flet as ft
 
 
 def main(page: ft.Page):
-    counter = ft.Text("0", size=50, data=0)
-
-    def increment_click(e):
-        counter.data += 1
-        counter.value = str(counter.data)
+    page.title = "Valgrind"
 
     page.floating_action_button = ft.FloatingActionButton(
-        icon=ft.Icons.ADD, on_click=increment_click
+        icon=ft.Icons.INFO
     )
-    page.add(
-        ft.SafeArea(
-            expand=True,
-            content=ft.Container(
-                content=counter,
-                alignment=ft.Alignment.CENTER,
+
+    page.floating_action_button_location = ft.FloatingActionButtonLocation.CENTER_DOCKED
+    
+    page.navigation_bar = ft.NavigationBar(
+        destinations=[
+            ft.NavigationBarDestination(
+                icon=ft.Icons.TEXT_FIELDS,
+                label="Текст"
             ),
-        )
+            ft.NavigationBarDestination(
+                icon=ft.Icons.IMAGE, 
+                label="Изображение"
+            )
+        ],
+        selected_index=None,
     )
 
-
-ft.run(main)
+if __name__ == "__main__":
+    ft.run(main)

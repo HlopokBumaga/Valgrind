@@ -5,7 +5,7 @@ description = "The data encryption program"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
-    { name = "Dmitry Kovalenko", email = "hb-example@mail.com" }
+    { name = "Dmitry Kovalenko" }
 ]
 dependencies = [
     "flet>=0.80.5"
