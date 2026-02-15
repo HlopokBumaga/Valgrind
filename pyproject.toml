@@ -25,3 +25,4 @@ company = "hlopokbumaga"
 
 [tool.flet.app]
 path = "src"
+exclude = [".git", ".venv"]
