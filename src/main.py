@@ -1,4 +1,5 @@
 import flet as ft
+import json
 from assets.pages.Pages import MP, TEP, IEP
 
 # --- Paths ---
@@ -6,6 +7,17 @@ MAIN_ICON_DARK_PATH = "src/assets/logos/Logo_Black_Only_Text.svg"
 MAIN_ICON_LIGHT_PATH = "src/assets/logos/Logo_White_Only_Text.svg"
 BAR_ICON_LIGHT_PATH = "src/assets/logos/Logo_White_Only.svg"
 BAR_ICON_DARK_PATH = "src/assets/logos/Logo_Black_Only.svg"
+CONFIG_PATH = "src/config.json"
+LOCAL_PATH = "src/assets/localization/local_"
+
+# --- Config ---
+with open(CONFIG_PATH, "r") as file:
+    config = json.load(file)
+
+# --- Load language vocabulary ---
+with open(f"{LOCAL_PATH}{config["language"]}.json", "r") as local:
+    LOCAL_DICT = json.load(local)
+
 
 # --- App ---
 def main(page: ft.Page):
@@ -15,7 +27,7 @@ def main(page: ft.Page):
 
     # --- Init pages ---
     main_page = MP(page, MAIN_ICON_LIGHT_PATH, MAIN_ICON_DARK_PATH)
-    text_page = TEP(page)
+    text_page = TEP(page, LOCAL_DICT)
     image_page = IEP(page)
 
     # --- Menu bar ---

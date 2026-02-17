@@ -1,0 +1,12 @@
+{
+    "description_methods": [
+        "Description: XOR encryption is a simple symmetric cipher based on the bitwise XOR operation.",
+        "Description: The Caesar cipher is a substitution cipher in which each character in the text is replaced by another, located at a certain constant distance to the left or right of it in the alphabet.",
+        "Description: The Vigener cipher is a method of encrypting text using a keyword. Each letter in the source text is shifted alphabetically by a variable number of characters."
+    ],
+    "methods": [
+        "XOR",
+        "The Caesar Cipher",
+        "The Vigener Cipher"
+    ]
+}

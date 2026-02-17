@@ -37,7 +37,19 @@ class MP():
 
 # --- Text encryption page ---
 class TEP():
-    def __init__(self, page):
+    def __init__(self, page, local):
+        # --- Load language vocabulary ---
+        self.local = local
+
+        # --- Data containers ---
+        self.data = ft.Ref[ft.TextField]()
+        self.password = ft.Ref[ft.TextField]()
+        self.password_repeat = ft.Ref[ft.TextField]()
+
+        self.method = ft.Ref[ft.DropdownM2]()
+        self.description = ft.Ref[ft.Text]()
+
+        # --- Text page form ---
         self.content = ft.Row(
             ft.Column(
                 [
@@ -61,7 +73,14 @@ class TEP():
                             ),
                         ],
                     ),
-                    ft.TextField(label="Данные", multiline=True),
+
+                    # --- Data text field ---
+                    ft.TextField(
+                        label="Данные", 
+                        multiline=True,
+                        ref=self.data
+                    ),
+                    
                     ft.Divider(),
                     ft.Text(
                         "Параметры шифрования", 
@@ -70,34 +89,65 @@ class TEP():
                     ft.DropdownM2(
                         label="Метод",
                         options=[
-                            ft.dropdown.Option("XOR"),
-                            ft.dropdown.Option("Шифр Цезаря")
+                            ft.dropdown.Option(self.local["methods"][0]),
+                            ft.dropdown.Option(self.local["methods"][1]),
+                            ft.dropdown.Option(self.local["methods"][2])
                         ],
+                        on_change=self.change_method,
+                        ref=self.method
                     ),
-                    ft.Divider(),
+
+                    # --- Method description ---
                     ft.Text(
-                        "Безопасность", 
-                        size=16
-                    ),
-                    ft.TextField(
-                        label="Ключ шифрования", password=True, can_reveal_password=True
-                    ),
-                    ft.TextField(
-                        label="Повтор", password=True, can_reveal_password=True
+                        "",
+                        size=14,
+                        width=300,
+                        text_align=ft.TextAlign.JUSTIFY,
+                        ref=self.description
                     ),
                     ft.Divider(),
-                    ft.Button("Подтвердить", icon=ft.Icons.CHECK),
+
+                    # --- Password text field ---
+                    ft.TextField(
+                        label="Ключ шифрования", 
+                        password=True, 
+                        can_reveal_password=True,
+                        ref=self.password
+                    ),
+
+                    # --- Repeat password text field ---
+                    ft.TextField(
+                        label="Повтор", 
+                        password=True,
+                        can_reveal_password=True,
+                        ref=self.password_repeat
+                    ),
+
+                    ft.Divider(),
+                    ft.Button(
+                        "Подтвердить", 
+                        icon=ft.Icons.CHECK, 
+                        on_click=self.confirm_button
+                    ),
                 ],
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                scroll=ft.ScrollMode.ADAPTIVE
+                scroll=ft.ScrollMode.ADAPTIVE,
             ),
             expand=True,
-            alignment=ft.MainAxisAlignment.CENTER,
+            alignment=ft.MainAxisAlignment.CENTER
         )
     
     def get_content(self):
         return self.content
-    
+
+    # --- Confirm function ---
+    def confirm_button(self, e):
+        print(self.data.current.value)
+
+    # --- Change method and get description ---
+    def change_method(self, e):
+        self.description.current.value = self.local["description_methods"][self.local["methods"].index(self.method.current.value)]
+
 
 # --- Image encryption page ---
 class IEP():
@@ -106,7 +156,7 @@ class IEP():
             [
                 ft.Column(
                     [
-                        ft.Text(value="Шифрование изображения"),
+                        ft.Text(value="В разработке / In development"),
                     ],
                     alignment=ft.MainAxisAlignment.CENTER,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
