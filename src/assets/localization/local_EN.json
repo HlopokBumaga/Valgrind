@@ -4,9 +4,40 @@
         "Description: The Caesar cipher is a substitution cipher in which each character in the text is replaced by another, located at a certain constant distance to the left or right of it in the alphabet.",
         "Description: The Vigener cipher is a method of encrypting text using a keyword. Each letter in the source text is shifted alphabetically by a variable number of characters."
     ],
+    "description_methods_keys":[
+        "Key requirement: a positive number.",
+        "Key requirement: positive or negative number.",
+        "Key requirement: a word written in Cyrillic or Latin script."
+    ],
     "methods": [
         "XOR",
         "The Caesar Cipher",
         "The Vigener Cipher"
+    ],
+    "main_page": [
+        "A program for data encryption.",
+        "Select the encryption target in the menu at the bottom."
+    ],
+    "navigation_bar": [
+        "Text",
+        "Main",
+        "Image"
+    ],
+    "app_bar": [
+        "Settings",
+        "Guide"
+    ],
+    "text_page": [
+        "Text encryption",
+        "Encrypt",
+        "Decrypt",
+        "Data",
+        "Encryption Options",
+        "Method",
+        "Encryption key",
+        "Repeat",
+        "Confirm",
+        "Successfully!",
+        "Result"
     ]
 }
