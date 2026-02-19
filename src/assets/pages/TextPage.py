@@ -6,9 +6,11 @@ Creating the text page.
 
 import flet as ft
 from ..methods.xor import xor
+from ..methods.caesar import caesar
 
 # --- Load cryptographers ---
 crypto_xor = xor()
+crypto_caesar = caesar()
 
 
 # --- Text encryption page ---
@@ -28,6 +30,8 @@ class TEP:
         self.local = local
 
         # --- Initialization references ---
+        self.target = ft.Ref[ft.SegmentedButton]()
+
         self.data = ft.Ref[ft.TextField]()
         self.password = ft.Ref[ft.TextField]()
         self.password_repeat = ft.Ref[ft.TextField]()
@@ -79,6 +83,7 @@ class TEP:
                                         label=ft.Text(self.local["text_page"][2]),
                                     ),
                                 ],
+                                ref=self.target
                             ),
                             # --- Data text field ---
                             ft.TextField(
@@ -97,9 +102,7 @@ class TEP:
                                 label=self.local["text_page"][5],
                                 options=[
                                     ft.dropdown.Option(self.local["methods"][0]),
-                                    ft.dropdown.Option(
-                                        self.local["methods"][1], disabled=True
-                                    ),
+                                    ft.dropdown.Option(self.local["methods"][1]),
                                     ft.dropdown.Option(
                                         self.local["methods"][2], disabled=True
                                     ),
@@ -186,7 +189,19 @@ class TEP:
             else:
                 self.error.current.content = "Confirmation error: keys do not match"
                 self.page.show_dialog(self.error_bar)
-
+        elif self.method.current.value == self.local["methods"][1]: # Caesar
+            if self.password.current.value == self.password_repeat.current.value:
+                try:
+                    self.result_text.current.value = crypto_caesar.crypt(
+                        self.data.current.value, self.password.current.value, self.target.current.selected[0]
+                    )
+                    self.page.show_dialog(self.result_bar)
+                except ValueError as err:
+                    self.error.current.content = f"ValueError: {err}"
+                    self.page.show_dialog(self.error_bar)
+            else:
+                self.error.current.content = "Confirmation error: keys do not match"
+                self.page.show_dialog(self.error_bar)
         else:  # Method is not selected
             self.error.current.content = (
                 "invalid method: the encryption method is not selected"
