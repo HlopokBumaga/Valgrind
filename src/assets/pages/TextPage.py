@@ -7,10 +7,12 @@ Creating the text page.
 import flet as ft
 from ..methods.xor import xor
 from ..methods.caesar import caesar
+from ..methods.vigener import vigener
 
 # --- Load cryptographers ---
 crypto_xor = xor()
 crypto_caesar = caesar()
+crypto_vigener = vigener()
 
 
 # --- Text encryption page ---
@@ -103,9 +105,7 @@ class TEP:
                                 options=[
                                     ft.dropdown.Option(self.local["methods"][0]),
                                     ft.dropdown.Option(self.local["methods"][1]),
-                                    ft.dropdown.Option(
-                                        self.local["methods"][2], disabled=True
-                                    ),
+                                    ft.dropdown.Option(self.local["methods"][2]),
                                 ],
                                 on_change=self.change_method,
                                 ref=self.method,
@@ -193,6 +193,19 @@ class TEP:
             if self.password.current.value == self.password_repeat.current.value:
                 try:
                     self.result_text.current.value = crypto_caesar.crypt(
+                        self.data.current.value, self.password.current.value, self.target.current.selected[0]
+                    )
+                    self.page.show_dialog(self.result_bar)
+                except ValueError as err:
+                    self.error.current.content = f"ValueError: {err}"
+                    self.page.show_dialog(self.error_bar)
+            else:
+                self.error.current.content = "Confirmation error: keys do not match"
+                self.page.show_dialog(self.error_bar)
+        elif self.method.current.value == self.local["methods"][2]: # Vigener
+            if self.password.current.value == self.password_repeat.current.value:
+                try:
+                    self.result_text.current.value = crypto_vigener.crypt(
                         self.data.current.value, self.password.current.value, self.target.current.selected[0]
                     )
                     self.page.show_dialog(self.result_bar)
