@@ -7,8 +7,8 @@ Creating the main page.
 import flet as ft
 
 # --- Paths ---
-MAIN_ICON_PATH_DARK = "src/assets/logos/Logo_Black_Only_Text.svg"
-MAIN_ICON_PATH_LIGHT = "src/assets/logos/Logo_White_Only_Text.svg"
+MAIN_ICON_PATH_DARK = "assets/logos/Logo_Black_Only_Text.svg"
+MAIN_ICON_PATH_LIGHT = "assets/logos/Logo_White_Only_Text.svg"
 
 
 # --- Main page ---

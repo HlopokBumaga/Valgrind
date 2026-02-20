@@ -21,12 +21,12 @@ from assets.pages.SettingsPage import SP
 from assets.pages.TextPage import TEP
 
 # --- Paths ---
-MAIN_ICON_PATH_DARK = "src/assets/logos/Logo_Black_Only_Text.svg"
-MAIN_ICON_PATH_LIGHT = "src/assets/logos/Logo_White_Only_Text.svg"
-BAR_ICON_PATH_LIGHT = "src/assets/logos/Logo_White_Only.svg"
-BAR_ICON_PATH_DARK = "src/assets/logos/Logo_Black_Only.svg"
-CONFIG_PATH = "src/config.json"
-LOCAL_PATH = "src/assets/localization/local_"
+MAIN_ICON_PATH_DARK = "assets/logos/Logo_Black_Only_Text.svg"
+MAIN_ICON_PATH_LIGHT = "assets/logos/Logo_White_Only_Text.svg"
+BAR_ICON_PATH_LIGHT = "assets/logos/Logo_White_Only.svg"
+BAR_ICON_PATH_DARK = "assets/logos/Logo_Black_Only.svg"
+CONFIG_PATH = "config.json"
+LOCAL_PATH = "assets/localization/local_"
 
 '''
 Preloading config for further 
@@ -43,7 +43,7 @@ Contstruction: LOCAL[<chapter>][<index>]
 - this is loading a phrase from the current language set. 
 It is found further along the code and in Pages.
 '''
-with open(f"{LOCAL_PATH}{config["language"]}.json", "r") as file:
+with open(f"{LOCAL_PATH}{config['language']}.json", "r", encoding="utf-8") as file:
     LOCAL = json.load(file)
 
 

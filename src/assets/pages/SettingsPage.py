@@ -8,8 +8,8 @@ import flet as ft
 import json
 
 # --- Paths ---
-BAR_ICON_PATH_LIGHT = "src/assets/logos/Logo_White_Only.svg"
-BAR_ICON_PATH_DARK = "src/assets/logos/Logo_Black_Only.svg"
+BAR_ICON_PATH_LIGHT = "assets/logos/Logo_White_Only.svg"
+BAR_ICON_PATH_DARK = "assets/logos/Logo_Black_Only.svg"
 
 
 # --- Settings page ---
