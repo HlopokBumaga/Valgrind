@@ -19,9 +19,9 @@ dev = [
 ]
 
 [tool.flet]
-org = "com.hlopokbumaga"
+org = "com.dmtkov"
 product = "valgrind"
-company = "hlopokbumaga"
+company = "Dmitry Kovalenko"
 
 [tool.flet.app]
 path = "src"
