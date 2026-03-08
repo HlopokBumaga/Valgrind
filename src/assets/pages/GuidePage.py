@@ -7,6 +7,10 @@ Creating the guide page.
 import flet as ft
 import asyncio
 
+# --- Paths ---
+MAIN_ICON_PATH_DARK = "assets/logos/Logo_Main_Black.svg"
+MAIN_ICON_PATH_LIGHT = "assets/logos/Logo_Main_White.svg"
+
 
 # --- Guide page ---
 class GP():
@@ -17,17 +21,19 @@ class GP():
     page - flet page,
     local - localization vocabulary.
     '''
-    def __init__(self, page, local):
+    def __init__(self, page, local, language):
         # --- Flet page ---
         self.page = page
 
         # --- Language vocabulary ---
         self.local = local
 
-        # --- Init guides ---
-        with open("assets/methods/guides/how_ru.md", "r") as how_file:
-            how_data = how_file.readlines()
+        # --- Initialization references ---
+        self.main_logo = ft.Ref[ft.Image]()
 
+        # --- Init guides ---
+        with open(f"assets/methods/guides/how_{language}.md", "r") as how_file:
+            how_data = how_file.readlines()
 
         self.content = ft.Tabs(
             selected_index=0,
@@ -38,15 +44,15 @@ class GP():
                     ft.TabBar(
                         tabs=[
                             ft.Tab(
-                                label="Шифрование данных", 
+                                label=self.local["guide_page"][0], 
                                 icon=ft.Icons.QUESTION_MARK
                             ),
                             ft.Tab(
-                                label="Методы шифрования", 
+                                label=self.local["guide_page"][1], 
                                 icon=ft.Icons.LIST
                             ),
                             ft.Tab(
-                                label="О программе", 
+                                label=self.local["guide_page"][2], 
                                 icon=ft.Icons.INFO_OUTLINE,    
                             ),
                         ],
@@ -69,9 +75,44 @@ class GP():
                                 content=ft.Text("Methods"),
                                 alignment=ft.Alignment.CENTER,
                             ),
-                            ft.Container(
-                                content=ft.Text("About"),
-                                alignment=ft.Alignment.CENTER,
+                            ft.Row(
+                                ft.Column(
+                                    [
+                                        ft.Image(
+                                            src=self.set_logo_by_theme(), width=250, ref=self.main_logo
+                                        ),
+                                        ft.Text(
+                                            value=self.local["guide_page"][3],
+                                            size=17,
+                                            weight=ft.FontWeight.W_600,
+                                            text_align=ft.TextAlign.CENTER
+                                        ),
+                                        ft.Text(
+                                            value=self.local["guide_page"][4],
+                                            size=17,
+                                        ),
+                                        ft.Text(
+                                            spans=[
+                                                ft.TextSpan(
+                                                    self.local["guide_page"][5],
+                                                    ft.TextStyle(
+                                                        decoration=ft.TextDecoration.UNDERLINE,
+                                                        color=ft.Colors.BLUE_500,
+                                                        decoration_color=ft.Colors.BLUE_500,
+                                                        size=17
+                                                    ),
+                                                    on_click=lambda: asyncio.create_task(self.page.launch_url('https://github.com/HlopokBumaga/Valgrind')),
+                                                ),
+                                            ]
+                                        )
+                                    ],
+                                    alignment=ft.MainAxisAlignment.CENTER,
+                                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                                    scroll=ft.ScrollMode.AUTO
+                                ),
+                                expand=True,
+                                alignment=ft.MainAxisAlignment.CENTER,
+                                vertical_alignment=ft.CrossAxisAlignment.CENTER,
                             )
                         ],
                     ),
@@ -79,8 +120,6 @@ class GP():
             )
         
         )
-                
-
 
         self.GuideAppBar = ft.AppBar(
             leading=ft.IconButton(
@@ -92,7 +131,13 @@ class GP():
             bgcolor=ft.Colors.SURFACE_CONTAINER,
         )
 
-
-    
     def get_content(self):
+        self.main_logo.current.src = self.set_logo_by_theme()
+
         return self.content
+    
+    def set_logo_by_theme(self):
+        if self.page.theme_mode.value == "dark":
+            return MAIN_ICON_PATH_LIGHT
+        else:
+            return MAIN_ICON_PATH_DARK

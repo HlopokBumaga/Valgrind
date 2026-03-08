@@ -39,5 +39,13 @@
         "Confirm",
         "Successfully!",
         "Result"
+    ],
+    "guide_page": [
+        "Data encryption",
+        "Encryption methods",
+        "About the program",
+        "Data encryption program.",
+        "Author: Dmitry Kovalenko",
+        "Github repository"
     ]
 }

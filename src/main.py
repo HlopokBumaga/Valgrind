@@ -91,7 +91,7 @@ def main(page: ft.Page):
         CONFIG_PATH,
         small_logo_ref
     )
-    guide_page = GP(page, LOCAL)
+    guide_page = GP(page, LOCAL, config["language"])
 
     '''
     Menu bar
