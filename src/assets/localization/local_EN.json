@@ -2,12 +2,12 @@
     "description_methods": [
         "Description: XOR encryption is a simple symmetric cipher based on the bitwise XOR operation.",
         "Description: The Caesar cipher is a substitution cipher in which each character in the text is replaced by another, located at a certain constant distance to the left or right of it in the alphabet.",
-        "Description: The Vigener cipher is a method of encrypting text using a keyword. Each letter in the source text is shifted alphabetically by a variable number of characters."
+        "Description: The Vigener cipher is a method of encrypting text using a keyword. Each letter in the source text is shifted alphabetically by a variable number of characters. The text should contain only Cyrillic characters."
     ],
     "description_methods_keys":[
         "Key requirement: a positive number.",
         "Key requirement: positive or negative number.",
-        "Key requirement: a word written in Cyrillic or Latin script."
+        "Key requirement: a word written in Cyrillic script."
     ],
     "methods": [
         "XOR",

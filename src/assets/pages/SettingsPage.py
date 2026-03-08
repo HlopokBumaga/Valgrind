@@ -6,6 +6,7 @@ Creating the settings page.
 
 import flet as ft
 import json
+import asyncio
 
 # --- Paths ---
 BAR_ICON_PATH_LIGHT = "assets/logos/Logo_White_Only.svg"
@@ -21,15 +22,17 @@ class SP():
     page - flet page,
     nav_bar - navigation bar,
     settings_path - path to config,
-    small logo and back button in app bar.
+    small logo in app bar.
     '''
-    def __init__(self, page, nav_bar, settings_path, back_button, small_logo):
+    def __init__(self, page, local, nav_bar, settings_path, small_logo):
         # --- Flet page ---
         self.page = page
 
+        # --- Language vocabulary ---
+        self.local = local
+
         # --- Data containers ---
         self.small_logo = small_logo
-        self.back_button = back_button
         self.nav_bar = nav_bar
         self.settings_path = settings_path
 
@@ -49,11 +52,6 @@ class SP():
         self.content = ft.Row(
             ft.Column(
                 [
-                    ft.Text(
-                        "Настройки / Settings", 
-                        weight=ft.FontWeight.W_600,
-                        size=17
-                    ),
                     ft.Column(
                         [
                             ft.Text(
@@ -123,10 +121,17 @@ class SP():
             alignment=ft.MainAxisAlignment.CENTER,
         )
 
-    def get_content(self):
-        self.back_button.current.visible = True
-        self.nav_bar.visible = False
+        self.SettingsAppBar = ft.AppBar(
+            leading=ft.IconButton(
+                icon=ft.Icons.ARROW_BACK,
+                on_click=lambda: asyncio.create_task(self.page.push_route("/")),
+            ),
+            title=ft.Text(self.local["app_bar"][0]),
+            center_title=False,
+            bgcolor=ft.Colors.SURFACE_CONTAINER,
+        )
 
+    def get_content(self):
         return self.content
     
     '''

@@ -1,5 +1,5 @@
 '''
-Valgrind | Alpha ver. 1.0.0 | main.py
+Valgrind | Alpha ver. 1.1.1 | main.py
 
 Application creation, window parameters are set.
 Basic application elements are created: navigation bar, app bar.
@@ -11,14 +11,17 @@ MP - Main page
 TEP - Text encryption page
 IEP - Image encryption page
 SP - Settings page
+GP - Guide page
 '''
 
 import flet as ft
 import json
+import asyncio
 from assets.pages.MainPage import MP
 from assets.pages.ImagePage import IEP
 from assets.pages.SettingsPage import SP
 from assets.pages.TextPage import TEP
+from assets.pages.GuidePage import GP
 
 # --- Paths ---
 MAIN_ICON_PATH_DARK = "assets/logos/Logo_Black_Only_Text.svg"
@@ -66,100 +69,34 @@ def main(page: ft.Page):
     page.window.height = 700
 
     '''
+    Initialization references
+
+    Small logo in app bar.
+    '''
+    small_logo_ref = ft.Ref[ft.Image]()
+
+    '''
     Init pages
 
     Initialization of classes: 
-    main page, text encryption page, images.
+    main page, text encryption page, images and settings.
     '''
     main_page = MP(page, LOCAL)
     text_page = TEP(page, LOCAL)
     image_page = IEP()
-
-    '''
-    Initialization references
-
-    Small logo and back button in app bar.
-    '''
-    back_button_ref = ft.Ref[ft.IconButton]()
-    small_logo_ref = ft.Ref[ft.Image]()
-
-    '''
-    Bottom bar
-
-    Initializing the bottom bar and the click handler.
-    '''
-    def load_main_pages(e):
-        page.controls.clear()
-        current_page = e.control.selected_index
-
-        match current_page:
-            case 0:
-                page.add(text_page.get_content())
-            case 1:
-                page.add(main_page.get_content())
-            case 2:
-                page.add(image_page.get_content())
-
-    page.navigation_bar = ft.NavigationBar(
-        destinations=[
-            ft.NavigationBarDestination(
-                icon=ft.Icons.TEXT_FIELDS, label=LOCAL["navigation_bar"][0]
-            ),
-            ft.NavigationBarDestination(
-                icon=ft.Icons.HOME_OUTLINED,
-                selected_icon=ft.Icons.HOME,
-                label=LOCAL["navigation_bar"][1],
-            ),
-            ft.NavigationBarDestination(
-                icon=ft.Icons.IMAGE_OUTLINED,
-                selected_icon=ft.Icons.IMAGE,
-                label=LOCAL["navigation_bar"][2],
-            ),
-        ],
-        on_change=load_main_pages,
-        selected_index=1,
-        bgcolor=ft.Colors.SURFACE_CONTAINER,
+    settings_page = SP(
+        page,
+        LOCAL,
+        page.navigation_bar,
+        CONFIG_PATH,
+        small_logo_ref
     )
+    guide_page = GP(page, LOCAL)
 
     '''
     Menu bar
-
-    Initialization of the app bar and 
-    the handler for pressing the "back" button.
-
-    ---
-
-    Initialization of class:
-    settings page.
-    '''
-    settings_page = SP(
-        page,
-        page.navigation_bar,
-        CONFIG_PATH,
-        back_button_ref,
-        small_logo_ref
-    )
-
-    def back_to_main_page():
-        page.controls.clear()
-        page.navigation_bar.visible = True
-        back_button_ref.current.visible = False
-
-        current_page = page.navigation_bar.selected_index
-
-        match current_page:
-            case 0:
-                page.add(text_page.get_content())
-            case 1:
-                page.add(main_page.get_content())
-            case 2:
-                page.add(image_page.get_content())
-
-    def load_settings_page():
-        page.controls.clear()
-        page.add(settings_page.get_content())
-
-    page.appbar = ft.AppBar(
+    '''  
+    MainAppBar = ft.AppBar(
         leading=ft.Image(
             src=(
                 BAR_ICON_PATH_LIGHT
@@ -170,20 +107,18 @@ def main(page: ft.Page):
             ref=small_logo_ref,
         ),
         actions=[
-            ft.IconButton(
-                icon=ft.Icons.ARROW_BACK,
-                visible=False,
-                on_click=back_to_main_page,
-                ref=back_button_ref,
-            ),
             ft.PopupMenuButton(
                 items=[
                     ft.PopupMenuItem(
                         icon=ft.Icons.SETTINGS,
                         content=LOCAL["app_bar"][0],
-                        on_click=load_settings_page,
+                        on_click=lambda: asyncio.create_task(page.push_route("/settings"))
                     ),
-                    ft.PopupMenuItem(icon=ft.Icons.INFO, content=LOCAL["app_bar"][1]),
+                    ft.PopupMenuItem(
+                        icon=ft.Icons.INFO, 
+                        content=LOCAL["app_bar"][1],
+                        on_click=lambda: asyncio.create_task(page.push_route("/guide"))
+                    ),
                 ]
             ),
         ],
@@ -192,8 +127,86 @@ def main(page: ft.Page):
         bgcolor=ft.Colors.SURFACE_CONTAINER,
     )
 
+    BottomAppBar = ft.BottomAppBar(
+        content=ft.Row(
+            alignment=ft.MainAxisAlignment.SPACE_AROUND,
+            controls=[
+                ft.IconButton(
+                    icon=ft.Icons.TEXT_FIELDS,
+                    on_click=lambda: asyncio.create_task(page.push_route("/text"))
+                ),
+                ft.IconButton(
+                    icon=ft.Icons.IMAGE_OUTLINED,
+                ),
+            ],
+        ),
+        bgcolor=ft.Colors.SURFACE_CONTAINER,
+    )
+
+    '''
+    Change route
+
+    Allows you to switch between pages:
+    / - Main page
+    /text - Text encryption page
+    /settings - Settings page
+    /guide - Guide page
+    '''
+    def route_change():
+        page.views.clear()
+        page.views.append(
+            ft.View(
+                route="/",
+                controls=[
+                    main_page.get_content()
+                ],
+                appbar=MainAppBar,
+                bottom_appbar=BottomAppBar
+            )
+        )
+        if page.route == "/settings":
+            page.views.append(
+                ft.View(
+                    route="/settings",
+                    controls=[
+                        settings_page.get_content()
+                    ],
+                    appbar=settings_page.SettingsAppBar
+                )
+            )
+        if page.route == "/text":
+            page.views.append(
+                ft.View(
+                    route="/text",
+                    controls=[
+                        text_page.get_content()
+                    ],
+                    appbar=text_page.TextAppBar
+                )
+            )
+        if page.route == "/guide":
+            page.views.append(
+                ft.View(
+                    route="/guide",
+                    controls=[
+                        guide_page.get_content()
+                    ],
+                    appbar=guide_page.GuideAppBar
+                )
+            )
+        page.update()
+    
+    async def view_pop(e):
+        if e.view is not None:
+            page.views.remove(e.view)
+            top_view = page.views[-1]
+            await page.push_route(top_view.route)
+
+    page.on_route_change = route_change
+    page.on_view_pop = view_pop
+
     # --- Start rendering ---
-    page.add(main_page.get_content())
+    route_change()
 
 
 if __name__ == "__main__":

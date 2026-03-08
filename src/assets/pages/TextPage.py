@@ -1,10 +1,11 @@
 '''
 Valgrind | TextPage.py
 
-Creating the text page.
+Creating the text encryption page.
 '''
 
 import flet as ft
+import asyncio
 from ..methods.xor import xor
 from ..methods.caesar import caesar
 from ..methods.vigener import vigener
@@ -66,11 +67,6 @@ class TEP:
                 [
                     ft.Column(
                         [
-                            ft.Text(
-                                self.local["text_page"][0],
-                                weight=ft.FontWeight.W_600,
-                                size=17,
-                            ),
                             ft.SegmentedButton(
                                 selected_icon=ft.Icon(ft.Icons.CHECK),
                                 selected=["En"],
@@ -160,6 +156,16 @@ class TEP:
             expand=True,
             alignment=ft.CrossAxisAlignment.CENTER,
             vertical_alignment=ft.MainAxisAlignment.CENTER,
+        )
+
+        self.TextAppBar = ft.AppBar(
+            leading=ft.IconButton(
+                icon=ft.Icons.ARROW_BACK,
+                on_click=lambda: asyncio.create_task(self.page.push_route("/")),
+            ),
+            title=ft.Text(self.local["text_page"][0]),
+            center_title=False,
+            bgcolor=ft.Colors.SURFACE_CONTAINER,
         )
 
     def get_content(self):

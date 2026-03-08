@@ -1,6 +1,6 @@
 [project]
 name = "Valgrind"
-version = "1.0.0"
+version = "1.1.1"
 description = "The data encryption program"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -20,9 +20,12 @@ dev = [
 
 [tool.flet]
 org = "com.dmtkov"
-product = "valgrind"
+product = "Valgrind"
 company = "Dmitry Kovalenko"
 
 [tool.flet.app]
 path = "src"
 exclude = [".git", ".venv"]
+
+[tool.flet.splash]
+android = false
