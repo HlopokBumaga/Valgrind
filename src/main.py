@@ -1,5 +1,5 @@
 '''
-Valgrind | Alpha ver. 1.1.1 | main.py
+Valgrind | Beta ver. 2.0.0 | main.py
 
 Application creation, window parameters are set.
 Basic application elements are created: navigation bar, app bar.
@@ -8,20 +8,22 @@ Basic application elements are created: navigation bar, app bar.
 
 Importing flet, json, and page classes:
 MP - Main page
-TEP - Text encryption page
-IEP - Image encryption page
+EP - Encryption page
+DP - Decryption page
 SP - Settings page
 GP - Guide page
+DE - Details page
 '''
 
 import flet as ft
 import json
 import asyncio
 from assets.pages.MainPage import MP
-from assets.pages.ImagePage import IEP
+from assets.pages.DecryptionPage import DP
 from assets.pages.SettingsPage import SP
-from assets.pages.TextPage import TEP
+from assets.pages.EncryptionPage import EP
 from assets.pages.GuidePage import GP
+from assets.pages.Details import DE
 
 # --- Paths ---
 MAIN_ICON_PATH_DARK = "assets/logos/Logo_Black_Only_Text.svg"
@@ -79,11 +81,11 @@ def main(page: ft.Page):
     Init pages
 
     Initialization of classes: 
-    main page, text encryption page, images and settings.
+    main page, encryption page, decryption page and settings.
     '''
     main_page = MP(page, LOCAL)
-    text_page = TEP(page, LOCAL)
-    image_page = IEP()
+    encryption_page = EP(page, LOCAL)
+    decryption_page = DP(page, LOCAL)
     settings_page = SP(
         page,
         LOCAL,
@@ -92,6 +94,7 @@ def main(page: ft.Page):
         small_logo_ref
     )
     guide_page = GP(page, LOCAL, config["language"])
+    details_page = DE(page, LOCAL)
 
     '''
     Menu bar
@@ -132,11 +135,12 @@ def main(page: ft.Page):
             alignment=ft.MainAxisAlignment.SPACE_AROUND,
             controls=[
                 ft.IconButton(
-                    icon=ft.Icons.TEXT_FIELDS,
-                    on_click=lambda: asyncio.create_task(page.push_route("/text"))
+                    icon=ft.Icons.LOCK,
+                    on_click=lambda: asyncio.create_task(page.push_route("/encryption"))
                 ),
                 ft.IconButton(
-                    icon=ft.Icons.IMAGE_OUTLINED,
+                    icon=ft.Icons.NO_ENCRYPTION_GMAILERRORRED,
+                    on_click=lambda: asyncio.create_task(page.push_route("/decryption"))
                 ),
             ],
         ),
@@ -148,9 +152,11 @@ def main(page: ft.Page):
 
     Allows you to switch between pages:
     / - Main page
-    /text - Text encryption page
+    /encryption - Encryption page
+    /decryption - Decryption page
     /settings - Settings page
     /guide - Guide page
+    /details - Details page
     '''
     def route_change():
         page.views.clear()
@@ -174,14 +180,24 @@ def main(page: ft.Page):
                     appbar=settings_page.SettingsAppBar
                 )
             )
-        if page.route == "/text":
+        if page.route == "/encryption":
             page.views.append(
                 ft.View(
-                    route="/text",
+                    route="/encryption",
                     controls=[
-                        text_page.get_content()
+                        encryption_page.get_content()
                     ],
-                    appbar=text_page.TextAppBar
+                    appbar=encryption_page.EncryptionAppBar
+                )
+            )
+        if page.route == "/decryption":
+            page.views.append(
+                ft.View(
+                    route="/decryption",
+                    controls=[
+                        decryption_page.get_content()
+                    ],
+                    appbar=decryption_page.DecryptionAppBar
                 )
             )
         if page.route == "/guide":
@@ -192,6 +208,20 @@ def main(page: ft.Page):
                         guide_page.get_content()
                     ],
                     appbar=guide_page.GuideAppBar
+                )
+            )
+        if page.route == "/details":
+            page.views.append(
+                ft.View(
+                    route="/details",
+                    controls=[
+                        details_page.get_content(
+                            encryption_page.method.current.value, 
+                            encryption_page.data.current.value, 
+                            encryption_page.password.current.value
+                        )
+                    ],
+                    appbar=details_page.DetailsAppBar
                 )
             )
         page.update()

@@ -14,7 +14,7 @@ BAR_ICON_PATH_DARK = "assets/logos/Logo_Black_Only.svg"
 
 
 # --- Settings page ---
-class SP():
+class SP:
     '''
     Init class
 

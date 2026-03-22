@@ -13,7 +13,7 @@ MAIN_ICON_PATH_LIGHT = "assets/logos/Logo_Main_White.svg"
 
 
 # --- Guide page ---
-class GP():
+class GP:
     '''
     Init class
 
@@ -32,8 +32,11 @@ class GP():
         self.main_logo = ft.Ref[ft.Image]()
 
         # --- Init guides ---
-        with open(f"assets/methods/guides/how_{language}.md", "r") as how_file:
+        with open(f"assets/methods/guides/how_{language}.md", "r", encoding="utf-8") as how_file:
             how_data = how_file.readlines()
+        
+        with open(f"assets/methods/guides/methods_{language}.md", "r", encoding="utf-8") as methods_file:
+            methods_data = methods_file.readlines()
 
         self.content = ft.Tabs(
             selected_index=0,
@@ -71,9 +74,15 @@ class GP():
                                 ],
                                 scroll=ft.ScrollMode.AUTO
                             ),
-                            ft.Container(
-                                content=ft.Text("Methods"),
-                                alignment=ft.Alignment.CENTER,
+                            ft.Column(
+                                controls = [
+                                    ft.Markdown(
+                                        value="".join(methods_data),
+                                        selectable=True,
+                                        extension_set=ft.MarkdownExtensionSet.GITHUB_WEB,
+                                    ),
+                                ],
+                                scroll=ft.ScrollMode.AUTO
                             ),
                             ft.Row(
                                 ft.Column(

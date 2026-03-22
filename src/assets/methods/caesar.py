@@ -1,10 +1,10 @@
 class caesar:
     def __init__(self):
-        self.alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZабвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ0123456789!\"#$%&'()*+,-./0123456789:;<=>?@[\\]^_`{|}~ "
+        self.alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZабвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ0123456789!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
     
     def crypt(self, data, key, target):
         if data.isspace() or len(data) == 0:
-            raise ValueError(f"invalid data: \"{data}\": there is nothing to encrypt")
+            raise ValueError(f"invalid data: \"{data}\": there is no target")
 
         if all([True if number.isdigit() or number == "-" else False for number in key]):
             if int(key) != 0:

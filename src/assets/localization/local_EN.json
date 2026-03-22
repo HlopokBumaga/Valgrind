@@ -16,7 +16,7 @@
     ],
     "main_page": [
         "A program for data encryption.",
-        "Select the encryption target in the menu at the bottom."
+        "Select an action from the menu below."
     ],
     "navigation_bar": [
         "Text",
@@ -27,8 +27,8 @@
         "Settings",
         "Guide"
     ],
-    "text_page": [
-        "Text encryption",
+    "encryption_page": [
+        "Encryption",
         "Encrypt",
         "Decrypt",
         "Data",
@@ -38,7 +38,18 @@
         "Repeat",
         "Confirm",
         "Successfully!",
-        "Result"
+        "Result",
+        "The purpose of encryption",
+        "Details"
+    ],
+    "decryption_page": [
+        "Decryption",
+        "Checksum",
+        "Decryption Options",
+        "Decryption key",
+        "The purpose of decryption",
+        "The checksums match.",
+        "The checksums do not match."
     ],
     "guide_page": [
         "Data encryption",
@@ -47,5 +58,14 @@
         "Data encryption program.",
         "Author: Dmitry Kovalenko",
         "Github repository"
+    ],
+    "xor_details": [
+        "Plain text",
+        "Symbol code",
+        "Character code \n(binary)",
+        "Key \n(binary)",
+        "The result of the XOR operation",
+        "The result of the XOR operation \n(decimal)",
+        "Ciphertext"
     ]
 }

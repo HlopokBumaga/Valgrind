@@ -1,7 +1,7 @@
 '''
-Valgrind | TextPage.py
+Valgrind | EncryptionPage.py
 
-Creating the text encryption page.
+Creating the encryption page.
 '''
 
 import flet as ft
@@ -9,15 +9,17 @@ import asyncio
 from ..methods.xor import xor
 from ..methods.caesar import caesar
 from ..methods.vigener import vigener
+from ..methods.checksum import checksum
 
 # --- Load cryptographers ---
 crypto_xor = xor()
 crypto_caesar = caesar()
 crypto_vigener = vigener()
+crypto_checksum = checksum()
 
 
-# --- Text encryption page ---
-class TEP:
+# --- Encryption page ---
+class EP:
     '''
     Init class
 
@@ -33,8 +35,6 @@ class TEP:
         self.local = local
 
         # --- Initialization references ---
-        self.target = ft.Ref[ft.SegmentedButton]()
-
         self.data = ft.Ref[ft.TextField]()
         self.password = ft.Ref[ft.TextField]()
         self.password_repeat = ft.Ref[ft.TextField]()
@@ -48,45 +48,50 @@ class TEP:
         self.error = ft.Ref[ft.SnackBar]()
 
         self.result_text = ft.Ref[ft.TextField]()
+        self.checksum_text = ft.Ref[ft.TextField]()
+        self.details_button = ft.Ref[ft.TextButton]()
 
         # --- Information bars ---
         self.error_bar = ft.SnackBar("Error", bgcolor=ft.Colors.ERROR, ref=self.error)
 
         self.result_bar = ft.AlertDialog(
-            title=self.local["text_page"][9],
-            content=ft.TextField(
-                label=self.local["text_page"][10], read_only=True, ref=self.result_text
-            ),
+            title=self.local["encryption_page"][9],
+            content=ft.Column(
+                [
+                    ft.TextField(
+                        label=self.local["encryption_page"][10], 
+                        read_only=True, 
+                        ref=self.result_text
+                    ),
+                    ft.TextField(
+                        label=self.local["decryption_page"][1], 
+                        read_only=True, 
+                        ref=self.checksum_text
+                    ),
+                    ft.TextButton(
+                        self.local["encryption_page"][12],
+                        on_click=lambda: asyncio.create_task(self.page.push_route("/details")),
+                        ref=self.details_button
+                    )
+                ],
+                tight=True,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER
+            )
         )
 
         '''
-        Creating the text encryption page
+        Creating the encryption page
         '''
         self.content = ft.Row(
             ft.Column(
                 [
                     ft.Column(
                         [
-                            ft.SegmentedButton(
-                                selected_icon=ft.Icon(ft.Icons.CHECK),
-                                selected=["En"],
-                                allow_empty_selection=False,
-                                segments=[
-                                    ft.Segment(
-                                        value="En",
-                                        label=ft.Text(self.local["text_page"][1]),
-                                    ),
-                                    ft.Segment(
-                                        value="De",
-                                        label=ft.Text(self.local["text_page"][2]),
-                                    ),
-                                ],
-                                ref=self.target
-                            ),
+                            ft.Text(self.local["encryption_page"][11], size=16),
                             # --- Data text field ---
                             ft.TextField(
-                                label=self.local["text_page"][3],
-                                multiline=True,
+                                label=self.local["encryption_page"][3],
+                                max_length=30,
                                 on_change=self.change_confirm_button_state,
                                 ref=self.data,
                             ),
@@ -95,9 +100,9 @@ class TEP:
                     ),
                     ft.Column(
                         [
-                            ft.Text(self.local["text_page"][4], size=16),
+                            ft.Text(self.local["encryption_page"][4], size=16),
                             ft.DropdownM2(
-                                label=self.local["text_page"][5],
+                                label=self.local["encryption_page"][5],
                                 options=[
                                     ft.dropdown.Option(self.local["methods"][0]),
                                     ft.dropdown.Option(self.local["methods"][1]),
@@ -117,7 +122,7 @@ class TEP:
                             ft.Divider(),
                             # --- Password text field ---
                             ft.TextField(
-                                label=self.local["text_page"][6],
+                                label=self.local["encryption_page"][6],
                                 password=True,
                                 can_reveal_password=True,
                                 on_change=self.change_confirm_button_state,
@@ -125,7 +130,7 @@ class TEP:
                             ),
                             # --- Repeat password text field ---
                             ft.TextField(
-                                label=self.local["text_page"][7],
+                                label=self.local["encryption_page"][7],
                                 password=True,
                                 can_reveal_password=True,
                                 on_change=self.change_confirm_button_state,
@@ -143,7 +148,7 @@ class TEP:
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     ),
                     ft.Button(
-                        self.local["text_page"][8],
+                        self.local["encryption_page"][8],
                         icon=ft.Icons.CHECK,
                         on_click=self.confirm_button,
                         ref=self.confirm,
@@ -158,12 +163,12 @@ class TEP:
             vertical_alignment=ft.MainAxisAlignment.CENTER,
         )
 
-        self.TextAppBar = ft.AppBar(
+        self.EncryptionAppBar = ft.AppBar(
             leading=ft.IconButton(
                 icon=ft.Icons.ARROW_BACK,
                 on_click=lambda: asyncio.create_task(self.page.push_route("/")),
             ),
-            title=ft.Text(self.local["text_page"][0]),
+            title=ft.Text(self.local["encryption_page"][0]),
             center_title=False,
             bgcolor=ft.Colors.SURFACE_CONTAINER,
         )
@@ -177,7 +182,7 @@ class TEP:
     1) Lock the button to avoid double-clicking. 
     2) Check the selected method, otherwise we raise an exception. 
     3) Check if the keys match, otherwise we raise an exception. 
-    4) Encrypt it and output the result.
+    4) Encrypt it, get checksum and output the result.
     '''
     def confirm_button(self, e):
         self.confirm.current.disabled = True
@@ -185,9 +190,16 @@ class TEP:
         if self.method.current.value == self.local["methods"][0]:  # XOR
             if self.password.current.value == self.password_repeat.current.value:
                 try:
-                    self.result_text.current.value = crypto_xor.crypt(
-                        self.data.current.value, self.password.current.value
+                    result = crypto_xor.crypt(
+                        self.data.current.value, self.password.current.value, self.local
                     )
+                    self.result_text.current.value = result
+                    self.checksum_text.current.value = crypto_checksum.get_checksum(
+                        result.encode(),
+                        self.password.current.value.encode()
+                    )
+                    self.details_button.current.visible = True
+
                     self.page.show_dialog(self.result_bar)
                 except ValueError as err:
                     self.error.current.content = f"ValueError: {err}"
@@ -198,9 +210,16 @@ class TEP:
         elif self.method.current.value == self.local["methods"][1]: # Caesar
             if self.password.current.value == self.password_repeat.current.value:
                 try:
-                    self.result_text.current.value = crypto_caesar.crypt(
-                        self.data.current.value, self.password.current.value, self.target.current.selected[0]
+                    result = crypto_caesar.crypt(
+                        self.data.current.value, self.password.current.value, "En"
                     )
+                    self.result_text.current.value = result
+                    self.checksum_text.current.value = crypto_checksum.get_checksum(
+                        result.encode(),
+                        self.password.current.value.encode()
+                    )
+                    self.details_button.current.visible = False
+
                     self.page.show_dialog(self.result_bar)
                 except ValueError as err:
                     self.error.current.content = f"ValueError: {err}"
@@ -211,9 +230,16 @@ class TEP:
         elif self.method.current.value == self.local["methods"][2]: # Vigener
             if self.password.current.value == self.password_repeat.current.value:
                 try:
-                    self.result_text.current.value = crypto_vigener.crypt(
-                        self.data.current.value, self.password.current.value, self.target.current.selected[0]
+                    result = crypto_vigener.crypt(
+                        self.data.current.value, self.password.current.value, "En"
                     )
+                    self.result_text.current.value = result
+                    self.checksum_text.current.value = crypto_checksum.get_checksum(
+                        result.encode(),
+                        self.password.current.value.encode()
+                    )
+                    self.details_button.current.visible = False
+
                     self.page.show_dialog(self.result_bar)
                 except ValueError as err:
                     self.error.current.content = f"ValueError: {err}"
@@ -226,6 +252,8 @@ class TEP:
                 "invalid method: the encryption method is not selected"
             )
             self.page.show_dialog(self.error_bar)
+        
+        result = ""
 
     def change_confirm_button_state(self):
         self.confirm.current.disabled = False

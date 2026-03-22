@@ -4,7 +4,7 @@ class vigener:
 
     def crypt(self, data, key, target):
         if data.isspace() or len(data) == 0:
-            raise ValueError(f"invalid data: \"{data}\": there is nothing to encrypt")
+            raise ValueError(f"invalid data: \"{data}\": there is no target")
         
         if key.isalpha():
             if all(True if letter in self.alphabet else False for letter in key):
